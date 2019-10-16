@@ -1,26 +1,66 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from "react";
+import Header from "./components/Header";
+import Card from "./components/Card";
+import Wrapper from "./components/Wrapper";
+import cards from "./friends.json";
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  
+  const [friendState, setFriendState] = useState(cards);
+  const [pointState, setPointState] = useState(0);
+  const [topScoreState, setTopScoreState] = useState(0);
+
+
+ const startClick = id => {
+   return friendState.find((o, i) => {
+     if (o.id === id) {
+
+      if (cards[i].clicked === 0) {
+        cards[i].clicked = cards[i].clicked + 1;
+        setPointState(pointState + 1)
+        setFriendState(friendState.sort(() => Math.random() - 0.5))
+        
+      }
+      else {
+        gameOver();
+      }
+      return true;
+     }
+     return false;
+   });
+ }
+
+ const gameOver = () => {
+  if (pointState > topScoreState) {
+    setTopScoreState(pointState)
+    console.log(topScoreState)
+  }
+  friendState.forEach(friend => {
+    friend.clicked = 0;
+  });
+  alert(`Better luck next time! \nscore: ${pointState}`);
+  setPointState(0)
+  setFriendState(friendState.sort(() => Math.random() - 0.5));
+
+return true;
 }
+    
+
+    return (
+      <Wrapper>
+        <Header score={pointState} highscore={topScoreState}>Clicky game</Header>
+        {friendState.map(friend => (
+          <Card
+          startClick={startClick}
+            id={friend.id}
+            key={friend.id}
+            image={friend.image}
+          />
+        ))}
+      </Wrapper>
+    );
+  }
+
 
 export default App;
